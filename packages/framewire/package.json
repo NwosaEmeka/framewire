@@ -1,0 +1,72 @@
+{
+  "name": "framewire",
+  "version": "0.0.0",
+  "description": "Typed, tiny messaging between a host page and the iframe it embeds.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "host": [
+        "./dist/host.d.ts"
+      ],
+      "frame": [
+        "./dist/frame.d.ts"
+      ]
+    }
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./host": {
+      "import": {
+        "types": "./dist/host.d.ts",
+        "default": "./dist/host.js"
+      },
+      "require": {
+        "types": "./dist/host.d.cts",
+        "default": "./dist/host.cjs"
+      }
+    },
+    "./frame": {
+      "import": {
+        "types": "./dist/frame.d.ts",
+        "default": "./dist/frame.js"
+      },
+      "require": {
+        "types": "./dist/frame.d.cts",
+        "default": "./dist/frame.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "jsdom": "^31.0.1",
+    "tsup": "^9.0.0",
+    "typescript": "~6.0.3",
+    "vitest": "^5.1.0"
+  }
+}

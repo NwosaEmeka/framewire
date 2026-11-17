@@ -1,0 +1,4 @@
+.claude-local/
+dist/
+coverage/
+pnpm-lock.yaml
