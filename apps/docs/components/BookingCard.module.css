@@ -1,0 +1,81 @@
+/* The widget's own styles: ordinary class selectors, like most real widgets. */
+.card {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 360px;
+  padding: 20px;
+  border-radius: 14px;
+  border: 1px solid #e3e3ea;
+  background: #fff;
+  color: #1c1c24;
+  font:
+    15px/1.45 system-ui,
+    sans-serif;
+}
+.card[data-theme='dark'] {
+  background: #17171d;
+  border-color: #2c2c36;
+  color: #ececf1;
+}
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+.title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+.sub {
+  margin: 2px 0 0;
+  font-size: 13px;
+  opacity: 0.7;
+}
+.slots {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0;
+}
+.slot {
+  flex: 1;
+  padding: 8px 0;
+  border-radius: 8px;
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.slot[aria-pressed='true'] {
+  background: #4f46e5;
+  border-color: #4f46e5;
+  color: #fff;
+}
+.details {
+  margin: 0 0 16px;
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(79, 70, 229, 0.08);
+  font-size: 13px;
+}
+.book {
+  width: 100%;
+  padding: 10px 0;
+  border: 0;
+  border-radius: 8px;
+  background: #4f46e5;
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.book:disabled {
+  opacity: 0.4;
+  cursor: default;
+}

@@ -14,10 +14,13 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "size": "node scripts/size.mjs",
-    "e2e": "pnpm --filter e2e e2e"
+    "e2e": "pnpm --filter e2e e2e",
+    "changeset": "changeset"
   },
   "devDependencies": {
+    "@changesets/cli": "3.0.3",
     "@eslint/js": "^10.0.1",
+    "@next/eslint-plugin-next": "16.4.6",
     "esbuild": "0.28.2",
     "eslint": "^10.15.0",
     "globals": "^17.14.0",

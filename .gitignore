@@ -4,3 +4,10 @@ dist/
 coverage/
 e2e/test-results/
 e2e/playwright-report/
+.next/
+.vercel/
+next-env.d.ts
+*.tsbuildinfo
+# copied in by prepack
+packages/framewire/README.md
+packages/framewire/LICENSE

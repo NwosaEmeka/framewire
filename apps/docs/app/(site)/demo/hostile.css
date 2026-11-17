@@ -1,0 +1,35 @@
+/*
+ * A typical CMS theme being "helpful". Scoped under .hostile so it only
+ * wrecks the demo stage, not the rest of the docs.
+ */
+.hostile * {
+  box-sizing: content-box;
+  font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+  line-height: 2.2;
+  letter-spacing: 0.06em;
+}
+.hostile button {
+  display: block;
+  margin: 10px 0;
+  padding: 16px 36px;
+  border: 5px dashed #22c55e;
+  background: #ff2d95 !important;
+  color: #fff200 !important;
+  text-transform: uppercase;
+  transform: rotate(-2deg);
+}
+.hostile img {
+  width: 100%;
+  height: auto;
+}
+.hostile h3 {
+  font-size: 2.4rem;
+  margin: 0;
+}
+.hostile p {
+  color: #8a8a8a !important;
+  text-align: justify;
+}
+.hostile div {
+  padding: 4px;
+}

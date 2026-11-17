@@ -1,0 +1,12 @@
+{
+  // CI typechecks before building, so point "framewire" at its source instead of dist.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "paths": {
+      "@/*": ["./*"],
+      "framewire": ["../../packages/framewire/src/index.ts"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
+}
