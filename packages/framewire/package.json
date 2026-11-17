@@ -10,6 +10,8 @@
   ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
+  "unpkg": "./dist/framewire.global.js",
+  "jsdelivr": "./dist/framewire.global.js",
   "types": "./dist/index.d.ts",
   "typesVersions": {
     "*": {
@@ -58,7 +60,7 @@
     "node": ">=18"
   },
   "scripts": {
-    "build": "tsup",
+    "build": "rm -rf dist && tsup",
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json"
   },

@@ -4,7 +4,15 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default defineConfig(
-  { ignores: ['**/dist/**', '**/coverage/**', '.claude-local/**'] },
+  {
+    ignores: [
+      '**/dist/**',
+      '**/coverage/**',
+      '.claude-local/**',
+      'e2e/test-results/**',
+      'e2e/playwright-report/**',
+    ],
+  },
   js.configs.recommended,
   tseslint.configs.recommended,
   { languageOptions: { globals: { ...globals.browser, ...globals.node } } },

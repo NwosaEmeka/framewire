@@ -33,13 +33,51 @@ export interface CoreBridge {
   destroy(): void;
 }
 
+/** Internal view: no reserved-name guard, plus cleanup hooks for built-in features. */
+export interface Core extends CoreBridge {
+  onDestroy(cleanup: () => void): void;
+}
+
+export const noop = () => {};
+
+const RESERVED = 'fw:';
+
+const reserved = (name: string) =>
+  name.startsWith(RESERVED)
+    ? new FramewireError('RESERVED_NAME', `"${name}" uses the reserved "${RESERVED}" prefix`)
+    : undefined;
+
+const guard = (name: string) => {
+  const error = reserved(name);
+  if (error) throw error;
+};
+
+/** Wrap a core in the public API: reserved names are rejected, extras are mixed in. */
+export function expose<T extends object>(core: Core, extras?: T): CoreBridge & T {
+  const api: CoreBridge = {
+    ready: core.ready,
+    get state() {
+      return core.state;
+    },
+    emit: (name, data) => (guard(name), core.emit(name, data)),
+    on: (name, listener) => (guard(name), core.on(name, listener)),
+    handle: (name, handler) => (guard(name), core.handle(name, handler)),
+    request: (name, arg, options) => {
+      const error = reserved(name);
+      return error ? Promise.reject(error) : core.request(name, arg, options);
+    },
+    destroy: () => core.destroy(),
+  };
+  return Object.assign(api, extras);
+}
+
 const msg = (kind: Message['kind'], extra?: Omit<Message, 'framewire' | 'kind'>): Message => ({
   framewire: PROTOCOL_VERSION,
   kind,
   ...extra,
 });
 
-export function createBridge(win: Window, adapter: Adapter, options: BridgeOptions): CoreBridge {
+export function createBridge(win: Window, adapter: Adapter, options: BridgeOptions): Core {
   const defaultTimeout = options.timeout ?? 5000;
   const isHost = adapter.role === 'host';
 
@@ -51,6 +89,7 @@ export function createBridge(win: Window, adapter: Adapter, options: BridgeOptio
   const pending = new Map<string, Pending>();
   const handlers = new Map<string, Fn>();
   const listeners = new Map<string, Set<Fn>>();
+  const cleanups: (() => void)[] = [];
 
   let resolveReady!: () => void;
   let rejectReady!: (error: Error) => void;
@@ -59,7 +98,7 @@ export function createBridge(win: Window, adapter: Adapter, options: BridgeOptio
     rejectReady = reject;
   });
   // Callers who never await `ready` should not see an unhandled rejection.
-  ready.catch(() => {});
+  ready.catch(noop);
 
   const send = (message: Message) => {
     if (state === 'ready') adapter.post(message, peerOrigin!);
@@ -92,7 +131,7 @@ export function createBridge(win: Window, adapter: Adapter, options: BridgeOptio
   };
 
   const versionMismatch = (theirs: number) =>
-    `Protocol version mismatch: ${adapter.role} speaks v${PROTOCOL_VERSION}, peer speaks v${theirs}`;
+    `Protocol mismatch: ${adapter.role} v${PROTOCOL_VERSION}, peer v${theirs}`;
 
   const reply = (id: string, data: unknown, error?: { code: ErrorCode; message: string }) => {
     try {
@@ -199,7 +238,7 @@ export function createBridge(win: Window, adapter: Adapter, options: BridgeOptio
 
   const handshakeTimeout = options.handshakeTimeout ?? 10000;
   const handshakeTimer = setTimeout(
-    () => fail('HANDSHAKE_TIMEOUT', `No handshake from peer within ${handshakeTimeout}ms`),
+    () => fail('HANDSHAKE_TIMEOUT', `No handshake in ${handshakeTimeout}ms`),
     handshakeTimeout,
   );
 
@@ -250,10 +289,15 @@ export function createBridge(win: Window, adapter: Adapter, options: BridgeOptio
       });
     },
 
+    onDestroy(cleanup) {
+      cleanups.push(cleanup);
+    },
+
     destroy() {
       if (state === 'destroyed') return;
       win.removeEventListener('message', onMessage);
       detach?.();
+      for (const cleanup of cleanups.splice(0)) cleanup();
       if (state === 'failed') {
         state = 'destroyed';
         return;

@@ -75,3 +75,20 @@ describe('contract typing', () => {
     frame.handle('getUser', () => ({ id: '1' }));
   });
 });
+
+describe('frame-only navigation methods', () => {
+  it('exist on the frame bridge only', () => {
+    const host = {} as HostBridge<App>;
+    const frame = {} as FrameBridge<App>;
+
+    expectTypeOf(frame.navigateTop('https://pay.test', { state: { id: 1 } })).toEqualTypeOf<
+      Promise<void>
+    >();
+    expectTypeOf(frame.returnUrl()).toEqualTypeOf<Promise<string>>();
+    frame.onResume<{ id: number }>((state) => expectTypeOf(state).toEqualTypeOf<{ id: number }>());
+    // @ts-expect-error hosts cannot navigate themselves via the bridge
+    void host.navigateTop('https://pay.test');
+    // @ts-expect-error hosts do not resume
+    host.onResume(() => {});
+  });
+});

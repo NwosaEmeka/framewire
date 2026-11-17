@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Widget</title>
+    <style>
+      body {
+        margin: 0;
+        font: 16px/1.4 sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <p id="status">connecting</p>
+    <p id="resume"></p>
+    <div id="filler"></div>
+    <script src="/framewire.frame.global.js"></script>
+    <script>
+      const bridge = framewire.createFrame({
+        allowedOrigins: ['http://localhost:3000'],
+        resize: true,
+        handshakeTimeout: 3000,
+        timeout: 2000,
+      });
+      let handled = 0;
+      bridge.handle('echo', (value) => {
+        handled++;
+        return value;
+      });
+      bridge.handle('fail', () => {
+        throw new Error('nope');
+      });
+      bridge.onResume((state) => {
+        document.getElementById('resume').textContent = JSON.stringify(state);
+      });
+      const status = document.getElementById('status');
+      bridge.ready.then(
+        () => (status.textContent = 'ready'),
+        (error) => (status.textContent = `failed:${error.code}`),
+      );
+      window.bridge = bridge;
+      window.handledCount = () => handled;
+      window.setFiller = (px) => (document.getElementById('filler').style.height = `${px}px`);
+    </script>
+  </body>
+</html>

@@ -8,14 +8,14 @@ const invalid = (value: unknown, why: string) =>
 
 /** Turns "https://a.com/path" into "https://a.com". Rejects wildcards and opaque origins. */
 export function normalizeOrigin(value: string): string {
-  if (value === '*') throw invalid(value, 'wildcards are not allowed');
+  if (value === '*') throw invalid(value, 'wildcard');
   let origin: string;
   try {
     origin = new URL(value).origin;
   } catch {
     throw invalid(value, 'not a URL');
   }
-  if (origin === 'null') throw invalid(value, 'opaque origins are not allowed');
+  if (origin === 'null') throw invalid(value, 'opaque origin');
   return origin;
 }
 
@@ -30,7 +30,7 @@ export function toMatcher(allowed: AllowedOrigins): OriginMatcher {
     return { match: (origin) => origin !== 'null' && allowed(origin) };
   }
   if (!Array.isArray(allowed) || allowed.length === 0) {
-    throw invalid(allowed, 'expected a non-empty array or a function');
+    throw invalid(allowed, 'need a non-empty list or a function');
   }
   const set = new Set(allowed.map(normalizeOrigin));
   const [first] = set;

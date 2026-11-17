@@ -1,6 +1,6 @@
 import { afterEach, vi } from 'vitest';
 import { createFrameIn, type FrameOptions } from '../src/frame';
-import { createHostIn, type HostOptions } from '../src/host';
+import { createHostIn, type HostDeps, type HostOptions } from '../src/host';
 import { PROTOCOL_VERSION, type Message } from '../src/protocol';
 import type { AnyContract, Contract } from '../src/types';
 
@@ -67,8 +67,8 @@ export function setup({ hostOrigin = HOST, frameOrigin = FRAME } = {}) {
     hostSide,
     toFrame,
     toHost,
-    host<C extends Contract = AnyContract>(opts: Partial<HostOptions> = {}) {
-      const b = createHostIn<C>(window, { iframe, origin: FRAME, ...opts });
+    host<C extends Contract = AnyContract>(opts: Partial<HostOptions> = {}, deps: HostDeps = {}) {
+      const b = createHostIn<C>(window, { iframe, origin: FRAME, ...opts }, deps);
       bridges.push(b);
       return b;
     },
@@ -83,6 +83,7 @@ export function setup({ hostOrigin = HOST, frameOrigin = FRAME } = {}) {
 const cleanups: (() => void)[] = [];
 afterEach(() => {
   cleanups.splice(0).forEach((fn) => fn());
+  sessionStorage.clear();
   vi.restoreAllMocks();
   vi.useRealTimers();
 });

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Loader</title>
+  </head>
+  <body>
+    <p id="status">connecting</p>
+    <script
+      src="/framewire.global.js"
+      data-src="http://localhost:4000/"
+      data-max-height="500"
+      data-navigation="true"
+      data-title="Booking widget"
+    ></script>
+    <script>
+      document.querySelector('iframe').addEventListener('framewire:ready', (event) => {
+        window.bridge = event.detail.bridge;
+        document.getElementById('status').textContent = 'ready';
+      });
+    </script>
+  </body>
+</html>

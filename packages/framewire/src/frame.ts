@@ -1,5 +1,7 @@
-import { createBridge } from './bridge';
+import { createBridge, expose } from './bridge';
+import { frameNavigation } from './navigate';
 import { toMatcher, type AllowedOrigins } from './origin';
+import { reportSize, type FrameResizeOptions } from './resize';
 import type { AnyContract, BridgeOptions, Contract, FrameBridge } from './types';
 
 export interface FrameOptions extends BridgeOptions {
@@ -9,16 +11,18 @@ export interface FrameOptions extends BridgeOptions {
    * A predicate that returns true for everything disables origin checks.
    */
   allowedOrigins: AllowedOrigins;
+  /** Report this document's height to the host so it can size the iframe. */
+  resize?: boolean | FrameResizeOptions;
 }
 
 /** @internal Exposed for tests: run a frame bridge in a given window. */
 export function createFrameIn<C extends Contract = AnyContract>(
   win: Window,
-  { allowedOrigins, ...options }: FrameOptions,
+  { allowedOrigins, resize, ...options }: FrameOptions,
 ): FrameBridge<C> {
   const { match, single } = toMatcher(allowedOrigins);
   const embedded = () => win.parent !== win;
-  return createBridge(
+  const core = createBridge(
     win,
     {
       role: 'frame',
@@ -35,7 +39,9 @@ export function createFrameIn<C extends Contract = AnyContract>(
       },
     },
     options,
-  ) as unknown as FrameBridge<C>;
+  );
+  if (resize) reportSize(win, core, resize);
+  return expose(core, frameNavigation(core)) as unknown as FrameBridge<C>;
 }
 
 /** Create the frame side of a bridge. Call this inside the embedded page. */
