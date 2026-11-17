@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import type { NavigateOptions } from './navigate';
 
 /** Event name → payload type. */
 export type Events = Record<string, unknown>;
@@ -91,5 +92,19 @@ export interface Bridge<Self extends Side, Peer extends Side> {
   destroy(): void;
 }
 
+/** Frame-only methods for flows that must leave the iframe (payments, OAuth). */
+export interface FrameExtras {
+  /**
+   * Ask the host to navigate the top window to `url`. Resolves once the host
+   * accepts (the page then unloads); rejects with `NAVIGATION_DENIED` otherwise.
+   */
+  navigateTop(url: string | URL, options?: NavigateOptions): Promise<void>;
+  /** The host page's current URL, for use as a payment/OAuth return URL. */
+  returnUrl(): Promise<string>;
+  /** Called with the `state` given to `navigateTop` when the user comes back. */
+  onResume<S = unknown>(listener: (state: S) => void): () => void;
+}
+
 export type HostBridge<C extends Contract = AnyContract> = Bridge<C['host'], C['frame']>;
-export type FrameBridge<C extends Contract = AnyContract> = Bridge<C['frame'], C['host']>;
+export type FrameBridge<C extends Contract = AnyContract> = Bridge<C['frame'], C['host']> &
+  FrameExtras;

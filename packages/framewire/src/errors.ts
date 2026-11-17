@@ -5,7 +5,9 @@ export type ErrorCode =
   | 'TIMEOUT'
   | 'NO_HANDLER'
   | 'REMOTE_ERROR'
-  | 'DESTROYED';
+  | 'DESTROYED'
+  | 'RESERVED_NAME'
+  | 'NAVIGATION_DENIED';
 
 export class FramewireError extends Error {
   readonly code: ErrorCode;
