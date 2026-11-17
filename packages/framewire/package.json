@@ -1,12 +1,31 @@
 {
   "name": "framewire",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Typed, tiny messaging between a host page and the iframe it embeds.",
+  "keywords": [
+    "iframe",
+    "postMessage",
+    "embed",
+    "widget",
+    "cross-origin",
+    "typed",
+    "messaging",
+    "resize"
+  ],
+  "homepage": "https://framewire.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NwosaEmeka/framewire.git",
+    "directory": "packages/framewire"
+  },
+  "bugs": "https://github.com/NwosaEmeka/framewire/issues",
+  "author": "Nwosa Emeka",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
   "files": [
-    "dist"
+    "dist",
+    "!dist/size.json"
   ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -62,7 +81,8 @@
   "scripts": {
     "build": "rm -rf dist && tsup",
     "test": "vitest run",
-    "typecheck": "tsc -p tsconfig.json"
+    "typecheck": "tsc -p tsconfig.json",
+    "prepack": "node -e \"for (const f of ['README.md', 'LICENSE']) require('fs').copyFileSync('../../' + f, f)\""
   },
   "devDependencies": {
     "@types/node": "^26.6.6",
@@ -70,5 +90,8 @@
     "tsup": "^9.0.0",
     "typescript": "~6.0.3",
     "vitest": "^5.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

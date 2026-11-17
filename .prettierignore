@@ -4,3 +4,7 @@ coverage/
 pnpm-lock.yaml
 e2e/test-results/
 e2e/playwright-report/
+.next/
+.vercel/
+next-env.d.ts
+.changeset/*.md
